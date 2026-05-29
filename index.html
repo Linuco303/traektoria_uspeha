@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Путь к миллиону | Премиум-блог</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- Переменные и Базовые стили --- */
+        :root {
+            --bg-color: #0A0A0A;
+            --bg-accent: #141414;
+            --text-color: #FFFFFF;
+            --text-muted: #8E8E93;
+            --accent-color: #00E676;
+            --accent-glow: rgba(0, 230, 118, 0.2);
+            --font-main: 'Inter', sans-serif;
+            --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        body {
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* --- Компоненты повторного использования --- */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background-color: var(--accent-color);
+            color: #000000;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            border: 2px solid transparent;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+            background-color: #00cc66;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            box-shadow: 0 4px 15px var(--accent-glow);
+            background-color: transparent;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+        }
+
+        .accent-text {
+            color: var(--accent-color);
+        }
+
+        /* Анимация появления блоков при скролле */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 1. Хиро-секция (Hero) --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, #111 0%, #0a0a0a 100%);
+            padding: 40px 0;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: var(--accent-glow);
+            filter: blur(150px);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .hero-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- 2. О нас (About) --- */
+        .about {
+            padding: 140px 0;
+            background-color: var(--bg-color);
+        }
+
+        .about-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-photos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .photo-card {
+            aspect-ratio: 3/4;
+            background-color: var(--bg-accent);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(20%);
+            transition: var(--transition-smooth);
+        }
+
+        .photo-card:hover {
+            border-color: var(--accent-color);
+            transform: scale(1.02);
+        }
+
+        .photo-card:hover img {
+            filter: grayscale(0%);
+        }
+
+        .about-info p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* --- 3. Что мы снимаем (Instagram/Reels) --- */
+        .reels-section {
+            padding: 140px 0;
+            background-color: var(--bg-accent);
+            text-align: center;
+        }
+
+        .reels-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .phone-mockup {
+            background: #000000;
+            border: 8px solid #222222;
+            border-radius: 36px;
+            aspect-ratio: 9/16;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            transition: var(--transition-smooth);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .phone-mockup img.reels-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.95) 100%);
+            z-index: 1;
+        }
+
+        .phone-mockup:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-color);
+        }
+
+        .phone-mockup:hover img.reels-bg {
+            transform: scale(1.05);
+        }
+
+        .phone-mockup i.play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            transition: var(--transition-smooth);
+            z-index: 2;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .phone-mockup:hover i.play-icon {
+            color: var(--accent-color);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .phone-mockup h4 {
+            position: relative;
+            z-index: 2;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* --- 4. Telegram-канал (Promo) --- */
+        .telegram-promo {
+            padding: 140px 0;
+            background-color: var(--bg-color);
+        }
+
+        .tg-wrapper {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 60px;
+            align-items: center;
+            background: linear-gradient(135deg, #141414 0%, #0d0d0d 100%);
+            padding: 60px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tg-wrapper::after {
+            content: '\f3fe';
+            font-family: 'Font Awesome 6 Brands';
+            position: absolute;
+            right: -50px;
+            bottom: -50px;
+            font-size: 25rem;
+            color: rgba(0, 230, 118, 0.02);
+            pointer-events: none;
+        }
+
+        .tg-info p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            max-width: 600px;
+        }
+
+        /* Мокап чата Telegram */
+        .tg-chat-mockup {
+            background-color: #0f172a;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #000;
+        }
+
+        .chat-status h5 { font-size: 0.95rem; font-weight: 600; }
+        .chat-status span { font-size: 0.75rem; color: var(--accent-color); }
+
+        .chat-message {
+            background-color: rgba(255,255,255,0.05);
+            padding: 12px 16px;
+            border-radius: 14px;
+            border-top-left-radius: 2px;
+            margin-bottom: 12px;
+            max-width: 90%;
+        }
+
+        .chat-message p { font-size: 0.9rem; color: #e2e8f0; }
+        .chat-message .time { 
+            display: block; 
+            text-align: right; 
+            font-size: 0.7rem; 
+            color: rgba(255,255,255,0.3);
+            margin-top: 4px;
+        }
+
+        /* --- 5. Наш прогресс (Roadmap) --- */
+        .progress-section {
+            padding: 140px 0;
+            background-color: var(--bg-accent);
+        }
+
+        .progress-section .section-title {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .roadmap-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 0 20px 0;
+        }
+
+        /* Линия трека */
+        .roadmap-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        /* Заполненный прогресс (До 25% — ровно до отметки $1K) */
+        .roadmap-bar {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 25%; 
+            height: 4px;
+            background-color: var(--accent-color);
+            transform: translateY(-50%);
+            box-shadow: 0 0 15px var(--accent-color);
+            z-index: 2;
+        }
+
+        .roadmap-items {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 3;
+        }
+
+        .roadmap-node {
+            text-align: center;
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .node-info-block {
+            position: absolute;
+            bottom: 40px; 
+            width: 140px;
+            text-align: center;
+        }
+
+        .node-dot {
+            width: 20px;
+            height: 20px;
+            background-color: #222;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transition: var(--transition-smooth);
+            margin-top: -8px; 
+        }
+
+        .roadmap-node.completed .node-dot {
+            background-color: #000;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        .roadmap-node.current .node-dot {
+            background-color: var(--accent-color);
+            border-color: #fff;
+            box-shadow: 0 0 15px var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        .node-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .roadmap-node.completed .node-title,
+        .roadmap-node.current .node-title {
+            color: var(--text-color);
+        }
+
+        .node-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .roadmap-node.current .node-desc {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        /* --- 6. Контакты (Реклама) --- */
+        .contacts {
+            padding: 140px 0;
+            background-color: var(--bg-color);
+            text-align: center;
+        }
+
+        .contacts-box {
+            max-width: 600px;
+            margin: 40px auto 0 auto;
+            background-color: var(--bg-accent);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .email-link {
+            display: inline-block;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-top: 16px;
+            transition: var(--transition-smooth);
+            word-break: break-all;
+        }
+
+        .email-link:hover {
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
+
+        /* --- 7. Подвал (Footer) --- */
+        .footer {
+            padding: 60px 0;
+            background-color: #050505;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
+        .footer-socials {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-socials a {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            transition: var(--transition-smooth);
+        }
+
+        .footer-socials a:hover {
+            color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        .footer copyright {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* --- Адаптивность (Media Queries) --- */
+        @media (max-width: 1024px) {
+            .hero h1 { font-size: 4rem; }
+            .reels-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .tg-wrapper { grid-template-columns: 1fr; gap: 40px; padding: 40px; }
+            .roadmap-container { overflow-x: auto; padding-top: 100px; padding-bottom: 40px; }
+            .roadmap-inner { width: 900px; position: relative; height: 120px; }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .hero p { font-size: 1.2rem; }
+            .about { padding: 80px 0; }
+            .about-wrapper { grid-template-columns: 1fr; gap: 40px; }
+            .reels-section, .telegram-promo, .progress-section, .contacts { padding: 80px 0; }
+            .section-title { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero-buttons { flex-direction: column; width: 100%; gap: 12px; }
+            .btn { width: 100%; }
+            .reels-grid { grid-template-columns: 1fr; }
+            .about-photos { grid-template-columns: 1fr; }
+            .contacts-box { padding: 24px; }
+            .email-link { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <h1 class="reveal">Путь к <span class="accent-text">миллиону</span></h1>
+            <p class="reveal">Двое друзей. Реальная жизнь. Цель — $1 000 000.</p>
+            <div class="hero-buttons reveal">
+                <a href="https://t.me/traektoria_uspeha" target="_blank" class="btn" style="width: 100%; max-width: 320px; order: -1;">
+                    <i class="fab fa-telegram-plane"></i> Смотреть в Telegram
+                </a>
+                <a href="https://www.instagram.com/linucoo?igsh=MWJkNXJvdWU2anVxaQ%3D%3D&utm_source=qr" target="_blank" class="btn btn-secondary" title="Instagram Linucoo">
+                    <i class="fab fa-instagram"></i> Blog 1
+                </a>
+                <a href="https://www.instagram.com/fl1zz_1?igsh=eThoZnpiNW9zNmNn" target="_blank" class="btn btn-secondary" title="Instagram Fl1zz_1">
+                    <i class="fab fa-instagram"></i> Blog 2
+                </a>
+                <a href="https://www.tiktok.com/@linucoo?_r=1&_t=ZS-96lrPQUGDGW" target="_blank" class="btn btn-secondary" title="TikTok Linucoo">
+                    <i class="fab fa-tiktok"></i> TikTok 1
+                </a>
+                <a href="https://www.tiktok.com/@flizz_1?_r=1&_t=ZS-96lrRKyIh1x" target="_blank" class="btn btn-secondary" title="TikTok Fl1zz_1">
+                    <i class="fab fa-tiktok"></i> TikTok 2
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="about">
+        <div class="container about-wrapper">
+            <div class="about-photos reveal">
+                <div class="photo-card">
+                    <img src="partner1.jpg" alt="Partner 1">
+                </div>
+                <div class="photo-card">
+                    <img src="partner2.jpg" alt="Partner 2">
+                </div>
+            </div>
+            <div class="about-info reveal">
+                <h2 class="section-title">Кто мы <span class="accent-text">такие?</span></h2>
+                <p>Мы — два друга, которые приняли решение сломать привычные сценарии и построить капитал в один миллион долларов прямо на глазах у тысяч людей.</p>
+                <p>В нашем блоге нет фальшивого успеха, арендованных машин и заезженных курсов. Только реальное закулисье движения вверх.</p>
+                <p>Мы транслируем жизнь без фильтров: жесткие провалы, первые крупные заработки, личные отношения, быт и ежедневный выбор, который приближает нас к заветной цели.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="reels-section">
+        <div class="container">
+            <h2 class="section-title reveal">Подписывайся на наш <span class="accent-text">Instagram</span></h2>
+            <div class="reels-grid">
+                <div class="phone-mockup reveal" onclick="window.open('https://www.instagram.com/linucoo?igsh=MWJkNXJvdWU2anVxaQ%3D%3D&utm_source=qr', '_blank')">
+                    <img src="reels1.jpg" alt="Жизнь" class="reels-bg">
+                    <i class="fa-solid fa-play play-icon"></i>
+                    <h4>Жизнь</h4>
+                </div>
+                <div class="phone-mockup reveal" onclick="window.open('https://www.instagram.com/fl1zz_1?igsh=eThoZnpiNW9zNmNn', '_blank')">
+                    <img src="reels2.jpg" alt="Бизнес" class="reels-bg">
+                    <i class="fa-solid fa-play play-icon"></i>
+                    <h4>Бизнес-попытки</h4>
+                </div>
+                <div class="phone-mockup reveal" onclick="window.open('https://www.instagram.com/linucoo?igsh=MWJkNXJvdWU2anVxaQ%3D%3D&utm_source=qr', '_blank')">
+                    <img src="reels3.jpg" alt="Отношения" class="reels-bg">
+                    <i class="fa-solid fa-play play-icon"></i>
+                    <h4>Отношения</h4>
+                </div>
+                <div class="phone-mockup reveal" onclick="window.open('https://www.instagram.com/fl1zz_1?igsh=eThoZnpiNW9zNmNn', '_blank')">
+                    <img src="reels4.jpg" alt="Деньги" class="reels-bg">
+                    <i class="fa-solid fa-play play-icon"></i>
+                    <h4>Деньги</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="telegram-promo">
+        <div class="container">
+            <div class="tg-wrapper reveal">
+                <div class="tg-info">
+                    <h2 class="section-title">Основной дневник в <span class="accent-text">Telegram</span></h2>
+                    <p>В Telegram мы выкладываем всё без цензуры: чистые цифры, оперативные апдейты, наши бизнес-факапы, инсайты и личные истории. Только настоящая жизнь и жесткий путь к миллиону долларов.</p>
+                    <a href="https://t.me/traektoria_uspeha" target="_blank" class="btn">
+                        <i class="fab fa-telegram-plane"></i> Открыть канал
+                    </a>
+                </div>
+                <div class="tg-chat-mockup">
+                    <div class="chat-header">
+                        <div class="chat-avatar">TH</div>
+                        <div class="chat-status">
+                            <h5>Траектория Успеха | Блог</h5>
+                            <span>В процессе роста...</span>
+                        </div>
+                    </div>
+                    <div class="chat-message">
+                        <p>За сегодня слили $400 на тесты новой связки в дропшиппинге. Обидно? Да. Стоило того? Абсолютно. Вечером распишу математику и инсайты... 📈</p>
+                        <span class="time">14:02</span>
+                    </div>
+                    <div class="chat-message" style="margin-left: auto; background-color: rgba(0, 230, 118, 0.15); border-top-left-radius: 14px; border-top-right-radius: 2px;">
+                        <p>Ждем отчет! Красавцы, что показываете изнанку.</p>
+                        <span class="time">14:05</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="progress-section">
+        <div class="container">
+            <h2 class="section-title">Наш <span class="accent-text">прогресс</span></h2>
+            <div class="roadmap-container reveal">
+                <div class="roadmap-inner">
+                    <div class="roadmap-track"></div>
+                    <div class="roadmap-bar"></div>
+                    <div class="roadmap-items">
+                        <div class="roadmap-node completed">
+                            <div class="node-info-block">
+                                <div class="node-title">Старт</div>
+                                <div class="node-desc">Пройдено</div>
+                            </div>
+                            <div class="node-dot"></div>
+                        </div>
+                        <div class="roadmap-node current">
+                            <div class="node-info-block">
+                                <div class="node-title">$1K</div>
+                                <div class="node-desc">Текущая цель</div>
+                            </div>
+                            <div class="node-dot"></div>
+                        </div>
+                        <div class="roadmap-node">
+                            <div class="node-info-block">
+                                <div class="node-title">$10K</div>
+                                <div class="node-desc">Впереди</div>
+                            </div>
+                            <div class="node-dot"></div>
+                        </div>
+                        <div class="roadmap-node">
+                            <div class="node-info-block">
+                                <div class="node-title">$100K</div>
+                                <div class="node-desc">Впереди</div>
+                            </div>
+                            <div class="node-dot"></div>
+                        </div>
+                        <div class="roadmap-node">
+                            <div class="node-info-block">
+                                <div class="node-title">$1M</div>
+                                <div class="node-desc">Финиш</div>
+                            </div>
+                            <div class="node-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contacts">
+        <div class="container">
+            <h2 class="section-title reveal">Рекламодателям</h2>
+            <p class="reveal" style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Хочешь видеть свой бренд в нашем контенте, видеороликах или на этом сайте? Давай создадим крутой инфоповод вместе.</p>
+            <div class="contacts-box reveal">
+                <p>Свяжись с нами напрямую по почте:</p>
+                <a href="mailto:zamalev2@gmail.com" class="email-link">zamalev2@gmail.com</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-socials">
+                <a href="https://t.me/traektoria_uspeha" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
+                <a href="https://www.instagram.com/linucoo?igsh=MWJkNXJvdWU2anVxaQ%3D%3D&utm_source=qr" target="_blank" title="Instagram Linucoo"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.instagram.com/fl1zz_1?igsh=eThoZnpiNW9zNmNn" target="_blank" title="Instagram Fl1zz_1"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@linucoo?_r=1&_t=ZS-96lrPQUGDGW" target="_blank" title="TikTok Linucoo"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.tiktok.com/@flizz_1?_r=1&_t=ZS-96lrRKyIh1x" target="_blank" title="TikTok Fl1zz_1"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2026 Путь к миллиону. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const revealElements = document.querySelectorAll('.reveal');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15 
+            };
+
+            const rowserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            revealElements.forEach(el => {
+                rowserver.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
